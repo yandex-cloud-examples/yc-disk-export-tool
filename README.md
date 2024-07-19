@@ -4,7 +4,7 @@
 ## Оглавление
 * [Обзор](#overview)
 * [Описание процесса](#description)
-* [Права доступ и роли](#roles)
+* [Права доступа и роли](#roles)
 * [Подготовка инструмента к работе](#install)
 * [Порядок использования](#userguide)
 * [Примеры использования](#examples)
@@ -41,7 +41,7 @@
 По мере выполнения задач в рамках процесса инструмент пишет диагностические сообщения в [группу Default](https://yandex.cloud/ru/docs/logging/concepts/log-group) сервиса [Cloud Logging](https://yandex.cloud/ru/docs/logging/). 
 
 
-## Права доступ и роли <a id="roles"/></a>
+## Права доступа и роли <a id="roles"/></a>
 
 Для развёртывания инструмента и его запуска требуется определенный набор [полномочий (ролей)](https://yandex.cloud/ru/docs/iam/roles-reference) в Yandex Cloud.
 

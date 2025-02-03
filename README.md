@@ -65,6 +65,7 @@
 1. Убедиться, что все необходимые инструменты установлены и настроены:
 * `yc CLI` - [установлен](https://yandex.cloud/ru/docs/cli/operations/install-cli) и [настроен](https://yandex.cloud/ru/docs/cli/operations/profile/profile-create#create).
 * `jq` - [установлен](https://jqlang.github.io/jq/download/).
+* `bc` - установлен. Устанавливается командой `sudo apt install bc`.
 
 
 2. Загрузить решение из репозитория на [github.com](https://github.com/yandex-cloud-examples/yc-disk-export-tool):

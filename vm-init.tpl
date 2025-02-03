@@ -20,13 +20,16 @@ write_files:
   content: |
     #!/bin/bash
 
+    echo "Install bc"
+    apt install -y bc
+
     echo "Install YC CLI"
     YC_VER=$(curl -sfL https://storage.yandexcloud.net/yandexcloud-yc/release/stable)
     curl -sfL "https://storage.yandexcloud.net/yandexcloud-yc/release/$$YC_VER/linux/amd64/yc" -o /usr/local/bin/yc
     chmod +x /usr/local/bin/yc
 
     echo "Install AWS CLI v2"
-    curl -sfL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    curl -sfL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.22.35.zip" -o "awscliv2.zip"
     unzip -q awscliv2.zip
     cd aws
     ./install

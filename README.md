@@ -75,7 +75,7 @@ git clone https://github.com/yandex-cloud-examples/yc-disk-export-tool.git
 
 3. Перейти в папку с инструментом
 ```bash
-cd yc-disk-export-tool.git
+cd yc-disk-export-tool
 ```
 
 4. Запустить инициализацию инструмента

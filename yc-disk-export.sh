@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ======================================
-# Yandex Cloud VM disk/image Export tool
+# Yandex Cloud VM disk/image/snapshot Export tool
 # ======================================
 
 check_input_params () {
@@ -13,8 +13,8 @@ check_input_params () {
   printf "\n== Check Input parameters ==\n"
 
   echo "Check source-type ..."
-  if [[ "$SRC_TYPE" != "disk" && "$SRC_TYPE" != "image" ]]; then
-    echo "The source-type was wrong. Please specify: \"disk\" or \"image\""
+  if [[ "$SRC_TYPE" != "disk" && "$SRC_TYPE" != "image" && "$SRC_TYPE" != "snapshot" ]]; then
+    echo "The source-type was wrong. Please specify: \"disk\", \"image\" or \"snapshot\""
     exit
   fi
 
@@ -28,9 +28,14 @@ check_input_params () {
     if ! yc compute instance get --folder-id=$FOLDER_ID --name=$SRC_NAME > /dev/null ; then
       exit
     fi
-  else
+  elif [[ "$SRC_TYPE" == "image" ]]; then
     # src-type = image
     if ! yc compute image get --folder-id=$FOLDER_ID --name=$SRC_NAME > /dev/null ; then
+      exit
+    fi
+  else
+    # src-type = snapshot
+    if ! yc compute snapshot get --folder-id=$FOLDER_ID --name=$SRC_NAME > /dev/null ; then
       exit
     fi
   fi
@@ -91,10 +96,11 @@ check_config_params () {
 if [ "$#" != "4" ]; then
   printf "VM Disk Export tool\n" 
   printf "$0 <source-type> <folder-id> <source-name> <config-file>\n"
-  printf "  <source-type>: disk | image\n"
-  printf "  <source-name>: your-vm-name | your-image-name\n"
+  printf "  <source-type>: disk | image | snapshot\n"
+  printf "  <source-name>: your-vm-name | your-image-name | your-snapshot-name\n"
   printf "For example:\n  $0 disk b1g22jx2133dpa3yvxc3 mytest-vm ./disk-export.cfg\n"
   printf "  $0 image b1g22jx2133dpa3yvxc3 my-image ./disk-export.cfg\n"
+  printf "  $0 snapshot b1g22jx2133dpa3yvxc3 my-snapshot ./disk-export.cfg\n"
   exit
 
 else
@@ -140,6 +146,15 @@ else
     TSIZE=$(bc <<< "$CHUNKS * 93")
     printf "\n== Create secondary disk from Image for Export Helper VM ==\n"
     DISK_ID=$(yc compute disk create --zone=$zone_id --description="Disk from image $SRC_NAME" --folder-id=$WFOLDER --source-image-name=$SRC_NAME --type=network-ssd-nonreplicated --size=$TSIZE --format=json | jq -r .id)
+  fi
+
+  # If src = snapshot
+  if [[ "$SRC_TYPE" == "snapshot" ]]; then
+    PARAMS=($(yc compute snapshot get $SRC_NAME --folder-id=$FOLDER_ID --format=json | jq -r '.id, .disk_size'))
+    CHUNKS=$(bc <<< "scale=0; ${PARAMS[1]}/99857989632 + 1")
+    TSIZE=$(bc <<< "$CHUNKS * 93")
+    printf "\n== Create secondary disk from Snapshot for Export Helper VM ==\n"
+    DISK_ID=$(yc compute disk create --zone=$zone_id --description="Disk from snapshot $SRC_NAME" --folder-id=$WFOLDER --source-snapshot-id=${PARAMS[0]} --type=network-ssd-nonreplicated --size=$TSIZE --format=json | jq -r .id)
   fi
 
   # =========================

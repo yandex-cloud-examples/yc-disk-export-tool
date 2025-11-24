@@ -20,6 +20,7 @@
 Инструмент может:
 * Экспортировать загрузочный [диск ВМ](https://yandex.cloud/ru/docs/compute/concepts/disk) в [Yandex Object Storage](https://yandex.cloud/ru/docs/storage).
 * Экспортировать [образ ВМ](https://yandex.cloud/ru/docs/compute/concepts/image) в [Yandex Object Storage](https://yandex.cloud/ru/docs/storage).
+* Экспортировать [снимок диска](https://yandex.cloud/ru/docs/compute/concepts/snapshot) в [Yandex Object Storage](https://yandex.cloud/ru/docs/storage).
 
 В результате работы инструмента в указанном [bucket](https://yandex.cloud/ru/docs/storage/concepts/bucket) S3-хранилища будет создан файл с образом диска в формате [qcow2](https://ru.wikipedia.org/wiki/Qcow2).
 
@@ -28,7 +29,7 @@
 
 Экспорт работает следующим образом:
 
-1. Создаётся диск для ВМ из [снимка диска](https://yandex.cloud/ru/docs/compute/concepts/snapshot) или из [образа диска](https://yandex.cloud/ru/docs/compute/concepts/image) (в зависимости от выбранного режима работы инструмента).
+1. Создаётся диск для ВМ из [снимка диска](https://yandex.cloud/ru/docs/compute/concepts/snapshot) или из [образа диска](https://yandex.cloud/ru/docs/compute/concepts/image), либо используется существующий [снимок диска](https://yandex.cloud/ru/docs/compute/concepts/snapshot) (в зависимости от выбранного режима работы инструмента).
 
 2. В каталоге заданном при инициализации создаётся `Export Helper ВМ` к которой подключается диск, созданный на первом этапе.
 
@@ -105,11 +106,12 @@ cd yc-disk-export-tool
 У пользователя, запускающего инструмент, должны быть права на чтение в соответствующем каталоге, для ресурса который будет экспортироваться.
 
 При запуске инструмента необходимо указать следующие обязательные параметры:
-* `source-type` - тип источника данных. Определяет режим работы инструмента. Может принимать значения: `disk` или `image` в зависимости от типа ресурса для которого будет выполняться резервное копирование.
+* `source-type` - тип источника данных. Определяет режим работы инструмента. Может принимать значения: `disk`, `image` или `snapshot` в зависимости от типа ресурса для которого будет выполняться резервное копирование.
 * `folder-id` - [идентификатор каталога]((https://yandex.cloud/ru/docs/resource-manager/concepts/resources-hierarchy#folder)) облачных ресурсов в Yandex Cloud где находится источник данных.
 * `source-name` - имя ресурса источника данных в указанном каталоге облачных ресурсов:
   - для источника типа `disk` - это `название ВМ`
   - для источника типа `image` - это `название образа`
+  - для источника типа `snapshot` - это `название снимка`
 * `config-file` - путь к файлу конфигурации, созданный при инициализации инструмента.
 
 
@@ -128,6 +130,11 @@ cd yc-disk-export-tool
 ### Экспорт образа диска <a id="example-image"/></a>
 ```bash
 ./yc-disk-export.sh image b1g22jx2133dpa3yvxc3 win-image ./disk-export.cfg
+```
+
+### Экспорт снимка диска <a id="example-snapshot"/></a>
+```bash
+./yc-disk-export.sh snapshot b1g22jx2133dpa3yvxc3 my-snapshot ./disk-export.cfg
 ```
 
 

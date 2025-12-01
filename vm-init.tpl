@@ -50,7 +50,7 @@ write_files:
 
     # Create qcow2 image from raw disk
     echo "[disk-export-tool] Start image build."
-    qemu-img convert -p -c -o compression_type=zstd -f raw -O qcow2 /dev/vdb ${SRC_NAME}.qcow2
+    qemu-img convert -p -c -o compression_type=zlib -f raw -O qcow2 /dev/vdb ${SRC_NAME}.qcow2
     MSG="[disk-export-tool] Build qcow2 image for $SRC_TYPE $SRC_NAME was completed."
     echo $$MSG
     yc logging write --level=INFO --message="$$MSG" --folder-id=${WFOLDER}
